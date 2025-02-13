@@ -46,6 +46,17 @@ export default function AIImageGenerator() {
   return (
     <div className="flex flex-col items-center space-y-6 p-8 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800">AI Image Generator</h1>
+      <div className="relative w-3/4">
+        <Input
+          placeholder="What are you looking for?"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="w-full p-4 border rounded-full shadow-md text-lg"
+        />
+        <Button onClick={handleGenerate} disabled={loading} className="absolute right-2 top-2 px-4 py-2 bg-blue-500 text-white rounded-full">
+          {loading ? "Generating..." : "🔍"}
+        </Button>
+      </div>
       <div className="grid grid-cols-2 gap-4">
         {["Photorealistic", "Webtoon/Anime", "Logo/Design", "Fantasy/Concept Art"].map((s) => (
           <Button key={s} onClick={() => setStyle(s)} variant={style === s ? "default" : "outline"}>
@@ -62,15 +73,6 @@ export default function AIImageGenerator() {
           ))}
         </div>
       )}
-      <Input
-        placeholder="Describe your image (e.g., a futuristic city at night)"
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        className="w-3/4 p-2 border rounded-md"
-      />
-      <Button onClick={handleGenerate} disabled={loading} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
-        {loading ? "Generating..." : "Generate Image"}
-      </Button>
       {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
       {image && (
         <Card className="mt-4 w-3/4">
