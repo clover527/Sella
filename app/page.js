@@ -48,60 +48,43 @@ export default function Sella() {
   };
 
   return (
-    <div className="flex bg-white min-h-screen font-sans">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-100 min-h-screen p-6 flex flex-col shadow-lg">
-        <Button onClick={() => setShowSidebar(!showSidebar)}>☰</Button>
-        {showSidebar && <Sidebar setStyle={setStyle} setSubStyle={setSubStyle} />}
-      </div>
-
+    <div className="flex bg-white min-h-screen font-sans flex-col items-center justify-center">
+      {/* Header */}
+      <h1 className="text-5xl font-bold text-gray-800 mb-8">Sella</h1>
+      
       {/* Main Content */}
-      <div className="flex flex-col items-center flex-grow space-y-6 p-12 text-center">
-        <h1 className="text-4xl font-bold text-gray-800">Sella</h1>
-        {!chatMode ? (
-          <div className="relative w-3/4">
-            <Input
-              placeholder="Describe what you want to generate"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="w-full p-4 border rounded-full shadow-md text-lg"
-            />
-            <Button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="absolute right-2 top-2 px-4 py-2 bg-blue-500 text-white rounded-full"
-            >
-              {loading ? "Generating..." : "🔍"}
-            </Button>
-          </div>
-        ) : (
-          <div className="w-3/4 p-6 border rounded-lg shadow-md bg-gray-50">
-            <p className="text-gray-700">{prompt}</p>
-            {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
-            {image && (
-              <Card className="mt-4">
-                <CardContent>
-                  <img src={image} alt="Generated AI" className="w-full h-auto rounded-lg" />
-                  <Button className="mt-2 w-full bg-green-500 text-white" onClick={() => window.open(image, "_blank")}>
-                    Download Image
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        )}
-
-        {imageHistory.length > 0 && (
-          <div className="mt-6 w-3/4">
-            <h2 className="text-xl font-semibold">Previous Images</h2>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {imageHistory.slice(1, 4).map((img, index) => (
-                <img key={index} src={img} alt="Generated AI" className="w-full h-auto rounded-lg border" />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      {!chatMode ? (
+        <div className="relative w-1/2">
+          <Input
+            placeholder="Describe what you want to generate"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="w-full p-4 border rounded-full shadow-md text-lg text-center"
+          />
+          <Button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="absolute right-2 top-2 px-6 py-2 bg-blue-500 text-white rounded-full"
+          >
+            {loading ? "Generating..." : "🔍"}
+          </Button>
+        </div>
+      ) : (
+        <div className="w-1/2 p-6 border rounded-lg shadow-md bg-gray-50 text-center">
+          <p className="text-gray-700 text-lg font-semibold">{prompt}</p>
+          {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
+          {image && (
+            <Card className="mt-4">
+              <CardContent>
+                <img src={image} alt="Generated AI" className="w-full h-auto rounded-lg" />
+                <Button className="mt-2 w-full bg-green-500 text-white" onClick={() => window.open(image, "_blank")}>
+                  Download Image
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
     </div>
   );
 }
