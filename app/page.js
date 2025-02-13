@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent } from "../components/ui/card";
+import { Sidebar } from "../components/ui/sidebar";
 
 export default function AIImageGenerator() {
   const [style, setStyle] = useState("");
@@ -12,6 +13,7 @@ export default function AIImageGenerator() {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageHistory, setImageHistory] = useState([]);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const handleGenerate = async () => {
     const finalPrompt = prompt || "Generate a unique image.";
@@ -44,56 +46,53 @@ export default function AIImageGenerator() {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800">AI Image Generator</h1>
-      <div className="relative w-3/4">
-        <Input
-          placeholder="What are you looking for?"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="w-full p-4 border rounded-full shadow-md text-lg"
-        />
-        <Button onClick={handleGenerate} disabled={loading} className="absolute right-2 top-2 px-4 py-2 bg-blue-500 text-white rounded-full">
-          {loading ? "Generating..." : "🔍"}
-        </Button>
+    <div className="flex bg-white min-h-screen">
+      {/* Sidebar */}
+      <div className="w-16 flex-shrink-0 bg-gray-100 min-h-screen p-4 flex flex-col">
+        <Button onClick={() => setShowSidebar(!showSidebar)}>☰</Button>
+        {showSidebar && <Sidebar setStyle={setStyle} setSubStyle={setSubStyle} />}
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        {["Photorealistic", "Webtoon/Anime", "Logo/Design", "Fantasy/Concept Art"].map((s) => (
-          <Button key={s} onClick={() => setStyle(s)} variant={style === s ? "default" : "outline"}>
-            {s}
+
+      {/* Main Content */}
+      <div className="flex flex-col items-center flex-grow space-y-6 p-8">
+        <h1 className="text-3xl font-bold text-gray-800">AI Image Generator</h1>
+        <div className="relative w-3/4">
+          <Input
+            placeholder="Describe what you want to generate"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="w-full p-4 border rounded-full shadow-md text-lg"
+          />
+          <Button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="absolute right-2 top-2 px-4 py-2 bg-blue-500 text-white rounded-full"
+          >
+            {loading ? "Generating..." : "🔍"}
           </Button>
-        ))}
-      </div>
-      {style && (
-        <div className="grid grid-cols-2 gap-4 mt-2">
-          {["Detailed", "Minimalist", "Futuristic", "Vintage"].map((sub) => (
-            <Button key={sub} onClick={() => setSubStyle(sub)} variant={subStyle === sub ? "default" : "outline"}>
-              {sub}
-            </Button>
-          ))}
         </div>
-      )}
-      {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
-      {image && (
-        <Card className="mt-4 w-3/4">
-          <CardContent>
-            <img src={image} alt="Generated AI" className="w-full h-auto rounded-lg" />
-            <Button className="mt-2 w-full bg-green-500 text-white" onClick={() => window.open(image, "_blank")}>
-              Download Image
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-      {imageHistory.length > 0 && (
-        <div className="mt-6 w-3/4">
-          <h2 className="text-xl font-semibold">Previous Images</h2>
-          <div className="grid grid-cols-3 gap-2 mt-2">
-            {imageHistory.slice(1, 4).map((img, index) => (
-              <img key={index} src={img} alt="Generated AI" className="w-full h-auto rounded-lg border" />
-            ))}
+        {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
+        {image && (
+          <Card className="mt-4 w-3/4">
+            <CardContent>
+              <img src={image} alt="Generated AI" className="w-full h-auto rounded-lg" />
+              <Button className="mt-2 w-full bg-green-500 text-white" onClick={() => window.open(image, "_blank")}>
+                Download Image
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+        {imageHistory.length > 0 && (
+          <div className="mt-6 w-3/4">
+            <h2 className="text-xl font-semibold">Previous Images</h2>
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {imageHistory.slice(1, 4).map((img, index) => (
+                <img key={index} src={img} alt="Generated AI" className="w-full h-auto rounded-lg border" />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
