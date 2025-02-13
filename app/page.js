@@ -18,11 +18,13 @@ export default function AIImageGenerator() {
     const finalSubStyle = subStyle ? `${subStyle}, ` : "";
     setLoading(true);
     try {
+      const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
       const response = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer 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}`,
+          Authorization: `Bearer ${apiKey}`,
+          
         },
         body: JSON.stringify({
           prompt: `${finalStyle}${finalSubStyle}${finalPrompt}`,
