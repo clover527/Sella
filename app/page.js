@@ -11,6 +11,7 @@ export default function AIImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imageHistory, setImageHistory] = useState([]);
 
   const handleGenerate = async () => {
     const finalPrompt = prompt || "Generate a unique image.";
@@ -24,7 +25,6 @@ export default function AIImageGenerator() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
-          
         },
         body: JSON.stringify({
           prompt: `${finalStyle}${finalSubStyle}${finalPrompt}`,
@@ -34,7 +34,9 @@ export default function AIImageGenerator() {
         }),
       });
       const data = await response.json();
-      setImage(data.data[0].url);
+      const newImage = data.data[0].url;
+      setImage(newImage);
+      setImageHistory((prev) => [newImage, ...prev]);
     } catch (error) {
       console.error("Error generating image:", error);
     }
@@ -42,8 +44,8 @@ export default function AIImageGenerator() {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-8">
-      <h1 className="text-2xl font-bold">AI Image Generator</h1>
+    <div className="flex flex-col items-center space-y-6 p-8 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800">AI Image Generator</h1>
       <div className="grid grid-cols-2 gap-4">
         {["Photorealistic", "Webtoon/Anime", "Logo/Design", "Fantasy/Concept Art"].map((s) => (
           <Button key={s} onClick={() => setStyle(s)} variant={style === s ? "default" : "outline"}>
@@ -61,19 +63,34 @@ export default function AIImageGenerator() {
         </div>
       )}
       <Input
-        placeholder="Optional: Describe your image (e.g., a futuristic city at night)"
+        placeholder="Describe your image (e.g., a futuristic city at night)"
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
+        className="w-3/4 p-2 border rounded-md"
       />
-      <Button onClick={handleGenerate} disabled={loading}>
+      <Button onClick={handleGenerate} disabled={loading} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
         {loading ? "Generating..." : "Generate Image"}
       </Button>
+      {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
       {image && (
-        <Card className="mt-4">
+        <Card className="mt-4 w-3/4">
           <CardContent>
-            <img src={image} alt="Generated AI" className="w-full h-auto" />
+            <img src={image} alt="Generated AI" className="w-full h-auto rounded-lg" />
+            <Button className="mt-2 w-full bg-green-500 text-white" onClick={() => window.open(image, "_blank")}>
+              Download Image
+            </Button>
           </CardContent>
         </Card>
+      )}
+      {imageHistory.length > 0 && (
+        <div className="mt-6 w-3/4">
+          <h2 className="text-xl font-semibold">Previous Images</h2>
+          <div className="grid grid-cols-3 gap-2 mt-2">
+            {imageHistory.slice(1, 4).map((img, index) => (
+              <img key={index} src={img} alt="Generated AI" className="w-full h-auto rounded-lg border" />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
