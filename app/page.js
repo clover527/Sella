@@ -24,6 +24,9 @@ export default function Sella() {
     setChatMode(true);
     try {
       const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+      if (!apiKey) {
+        throw new Error("API key is missing. Please check your environment variables.");
+      }
       const response = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers: {
@@ -37,42 +40,53 @@ export default function Sella() {
           size: "1024x1024",
         }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch image. Please try again.");
+      }
       const data = await response.json();
-      const newImage = data.data[0].url;
+      const newImage = data.data[0]?.url;
+      if (!newImage) {
+        throw new Error("No image returned from API.");
+      }
       setImage(newImage);
       setImageHistory((prev) => [newImage, ...prev]);
     } catch (error) {
       console.error("Error generating image:", error);
+      alert(error.message);
     }
     setLoading(false);
   };
 
   return (
     <div className="flex bg-white min-h-screen font-sans flex-col items-center justify-center">
+      {/* Sidebar */}
+      <Sidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} />
+      
       {/* Header */}
-      <h1 className="text-5xl font-bold text-gray-800 mb-8">Sella</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mt-6 mb-6">Sella</h1>
       
       {/* Main Content */}
       {!chatMode ? (
-        <div className="relative w-1/2">
+        <div className="relative w-2/5">
           <Input
-            placeholder="Describe what you want to generate"
+            placeholder="Describe what you want to generate..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="w-full p-4 border rounded-full shadow-md text-lg text-center"
+            onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+            className="w-full p-3 border rounded-full shadow-md text-lg text-center"
           />
           <Button
             onClick={handleGenerate}
             disabled={loading}
-            className="absolute right-2 top-2 px-6 py-2 bg-blue-500 text-white rounded-full"
+            className="absolute left-3 top-2 px-4 py-2 bg-gray-500 text-white rounded-full"
           >
-            {loading ? "Generating..." : "🔍"}
+            🔍
           </Button>
         </div>
       ) : (
-        <div className="w-1/2 p-6 border rounded-lg shadow-md bg-gray-50 text-center">
+        <div className="w-2/5 p-4 border rounded-lg shadow-md bg-gray-50 text-center">
           <p className="text-gray-700 text-lg font-semibold">{prompt}</p>
-          {loading && <p className="text-gray-500">⏳ Generating image, please wait...</p>}
+          {loading && <p className="text-gray-500 animate-pulse">⏳ Generating image, please wait...</p>}
           {image && (
             <Card className="mt-4">
               <CardContent>
