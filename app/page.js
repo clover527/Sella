@@ -51,37 +51,37 @@ export default function Sella() {
   };
 
   return (
-    <div className="flex bg-white min-h-screen font-sans flex-col items-center justify-start pt-20">
+    <div className="flex bg-white min-h-screen font-sans flex-col items-center justify-start pt-16">
       {/* Sidebar */}
       <Sidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} collapsedWidth={50} expandedWidth={250} hoverExpand />
       
       {/* Header */}
-      <h1 className="text-4xl font-bold text-gray-800 mt-4 mb-4">Sella</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mt-2 mb-2">Sella</h1>
       
       {/* Main Content */}
       {!chatMode ? (
-        <div className="relative w-2/5 mt-[-20px]">
+        <div className="relative w-3/5 mt-[-10px]">
           <Input
             placeholder="Describe what you want to generate..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
-            className="w-full p-3 border rounded-full shadow-md text-lg text-center"
+            className="w-full p-2 border rounded-full shadow-md text-lg text-center"
           />
           <Button
             onClick={handleGenerate}
             disabled={loading}
-            className="absolute left-3 top-2 px-4 py-2 bg-gray-500 text-white rounded-full"
+            className="absolute left-4 top-1 px-3 py-1 bg-gray-400 text-white rounded-full"
           >
             🔍
           </Button>
         </div>
       ) : (
-        <div className="w-2/5 p-4 border rounded-lg shadow-md bg-gray-50 text-center mt-[-20px]">
+        <div className="w-3/5 p-3 border rounded-lg shadow-md bg-gray-50 text-center mt-[-10px]">
           <p className="text-gray-700 text-lg font-semibold">{prompt}</p>
           {loading && <p className="text-gray-500 animate-pulse">⏳ Generating image, please wait...</p>}
           {image && (
-            <Card className="mt-4">
+            <Card className="mt-3">
               <CardContent>
                 <img src={image} alt="Generated AI" className="w-full h-auto rounded-lg" />
                 <Button className="mt-2 w-full bg-green-500 text-white" onClick={() => window.open(image, "_blank")}>
